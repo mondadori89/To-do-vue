@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>To do list</h1>
+
     <ToDoForm 
       @submitClicked="onSubmitClicked"
     />
@@ -26,21 +27,37 @@ export default {
   },
   data() {
     return {
-      toDos: []
+      toDos: [],
+      toDosStored: [],
     }
   },
   methods: {
     onSubmitClicked(value) {
       this.toDos.push(value);
       console.log(this.toDos);
+      this.saveToDos();
     },
     onRemovedClicked(value) {
       this.toDos = this.toDos.filter(toDo => {
         return toDo !== value;
       })
       console.log(this.toDos);
+      this.saveToDos();
+    },
+    saveToDos() {
+      const parsed = JSON.stringify(this.toDos);
+      localStorage.setItem('toDos', parsed);
     }
-  }
+  },
+  mounted() {
+    if (localStorage.getItem('toDos')) {
+      try {
+        this.toDos = JSON.parse(localStorage.getItem('toDos'));
+      } catch(e) {
+        localStorage.removeItem('toDos');
+      }
+    }
+  },
 }
 </script>
 
